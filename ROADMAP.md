@@ -13,7 +13,7 @@ Assumption for current status:
 - `[done]` Repository exists and is connected to GitHub.
 - `[done]` Project brief and lab/report PDFs are available in the repository.
 - `[done]` High-level assignment requirements have been reviewed.
-- `[not started]` Agree on folder structure for source, headers, assets, tests, saves, and docs.
+- `[done]` Agree on folder structure for source, headers, assets, tests, saves, and docs.
 - `[not started]` Decide coding conventions, file naming, and branch workflow for the team.
 
 ## B. Requirements Breakdown
