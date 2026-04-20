@@ -89,4 +89,7 @@ void game_state_init(GameState *game_state);
 /* Clear the tableau/foundation area so a new play session can begin. */
 void game_state_reset_play_area(GameState *game_state);
 
+/* Free all currently allocated cards in the game state. */
+void game_state_destroy(GameState *game_state);
+
 #endif

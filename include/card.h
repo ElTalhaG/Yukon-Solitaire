@@ -53,4 +53,37 @@ typedef struct Card {
     struct Card *next;
 } Card;
 
+/* Allocate and initialize one new card node. Returns NULL on failure. */
+Card *card_create(CardRank rank, CardSuit suit, bool is_face_up);
+
+/* Free one card node allocated with card_create. */
+void card_destroy(Card *card);
+
+/* Convert one rank character such as 'A' or 'T' into a CardRank. */
+bool card_rank_from_char(char rank_char, CardRank *rank);
+
+/* Convert one suit character such as 'H' or 'S' into a CardSuit. */
+bool card_suit_from_char(char suit_char, CardSuit *suit);
+
+/* Convert enum values back into their single-character text form. */
+char card_rank_to_char(CardRank rank);
+char card_suit_to_char(CardSuit suit);
+
+/* Parse a two-character card code such as "AH" or "TD". */
+bool card_parse_code(const char *text, CardRank *rank, CardSuit *suit);
+
+/* Validate that rank and suit values are inside the expected enum ranges. */
+bool card_is_valid(CardRank rank, CardSuit suit);
+
+/* Format one face-up card into a three-byte buffer such as "AH". */
+bool card_format_face_up(const Card *card, char output[3]);
+
+/* Format either a face-up or hidden card for the terminal UI. */
+bool card_format_display(const Card *card, char output[4]);
+
+/* Comparison helpers used later for move validation. */
+int card_rank_difference(CardRank left, CardRank right);
+bool card_same_suit(const Card *left, const Card *right);
+bool card_same_rank(const Card *left, const Card *right);
+
 #endif
