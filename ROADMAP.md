@@ -14,15 +14,15 @@ Assumption for current status:
 - `[done]` Project brief and lab/report PDFs are available in the repository.
 - `[done]` High-level assignment requirements have been reviewed.
 - `[done]` Agree on folder structure for source, headers, assets, tests, saves, and docs.
-- `[not started]` Decide coding conventions, file naming, and branch workflow for the team.
+- `[done]` Decide coding conventions, file naming, and branch workflow for the team.
 
 ## B. Requirements Breakdown
 
-- `[not started]` Convert the PDF requirements into a short written specification in the repo.
-- `[not started]` Separate mandatory features from optional extensions.
-- `[not started]` List all STARTUP commands and their expected behaviors.
-- `[not started]` List all PLAY commands and their expected behaviors.
-- `[not started]` Define error cases and expected messages for invalid input and invalid moves.
+- `[done]` Convert the PDF requirements into a short written specification in the repo.
+- `[done]` Separate mandatory features from optional extensions.
+- `[done]` List all STARTUP commands and their expected behaviors.
+- `[done]` List all PLAY commands and their expected behaviors.
+- `[done]` Define error cases and expected messages for invalid input and invalid moves.
 
 ## C. Core Data Model
 
