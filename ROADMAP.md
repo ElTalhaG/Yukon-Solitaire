@@ -34,19 +34,19 @@ Assumption for current status:
 
 ## D. Card Utilities
 
-- `[not started]` Implement rank and suit parsing helpers.
-- `[not started]` Implement card validation helpers.
-- `[not started]` Implement card formatting for terminal output such as `AH`, `TD`, and `[ ]`.
-- `[not started]` Implement rank comparison helpers for tableau and foundation rules.
-- `[not started]` Implement suit comparison helpers.
+- `[done]` Implement rank and suit parsing helpers.
+- `[done]` Implement card validation helpers.
+- `[done]` Implement card formatting for terminal output such as `AH`, `TD`, and `[ ]`.
+- `[done]` Implement rank comparison helpers for tableau and foundation rules.
+- `[done]` Implement suit comparison helpers.
 
 ## E. Linked-List Operations
 
-- `[not started]` Implement node creation and destruction.
-- `[not started]` Implement push/pop operations for pile manipulation.
-- `[not started]` Implement list traversal helpers.
-- `[not started]` Implement split, splice, append, and segment-move helpers.
-- `[not started]` Implement memory cleanup for every game structure.
+- `[done]` Implement node creation and destruction.
+- `[done]` Implement push/pop operations for pile manipulation.
+- `[done]` Implement list traversal helpers.
+- `[done]` Implement split, splice, append, and segment-move helpers.
+- `[done]` Implement memory cleanup for every game structure.
 
 ## F. Deck Loading And Saving
 
