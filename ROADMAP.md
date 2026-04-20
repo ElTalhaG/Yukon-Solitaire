@@ -26,11 +26,11 @@ Assumption for current status:
 
 ## C. Core Data Model
 
-- `[not started]` Design the `Card` node structure with rank, suit, visibility, and next pointer.
-- `[not started]` Design linked-list structures for the deck, tableau columns, and foundations.
-- `[not started]` Define a full game-state structure that can be reused by both terminal and GUI versions.
-- `[not started]` Decide how to represent phase state: STARTUP vs PLAY.
-- `[not started]` Decide where last command and last message are stored for the terminal UI.
+- `[done]` Design the `Card` node structure with rank, suit, visibility, and next pointer.
+- `[done]` Design linked-list structures for the deck, tableau columns, and foundations.
+- `[done]` Define a full game-state structure that can be reused by both terminal and GUI versions.
+- `[done]` Decide how to represent phase state: STARTUP vs PLAY.
+- `[done]` Decide where last command and last message are stored for the terminal UI.
 
 ## D. Card Utilities
 
