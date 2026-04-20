@@ -1,0 +1,4 @@
+build/list.o
+build/game.o
+build/card.o
+PROJECT_SPEC.md
