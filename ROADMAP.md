@@ -74,11 +74,11 @@ Assumption for current status:
 
 ## I. Terminal Rendering
 
-- `[not started]` Print the tableau header with `C1` to `C7`.
-- `[not started]` Print foundations `F1` to `F4` in the required layout.
-- `[not started]` Render hidden cards as `[ ]`.
-- `[not started]` Render visible cards with the correct two-character format.
-- `[not started]` Print `Last Command`, `Message`, and `INPUT >` consistently after each action.
+- `[done]` Print the tableau header with `C1` to `C7`.
+- `[done]` Print foundations `F1` to `F4` in the required layout.
+- `[done]` Render hidden cards as `[ ]`.
+- `[done]` Render visible cards with the correct two-character format.
+- `[done]` Print `Last Command`, `Message`, and `INPUT >` consistently after each action.
 
 ## J. Command Parser
 
