@@ -11,6 +11,7 @@ add_library(yukon_core
     src/core/game.c
     src/core/list.c
     src/core/deck_io.c
+    src/core/shuffle.c
 )
 
 target_include_directories(yukon_core PUBLIC include)
