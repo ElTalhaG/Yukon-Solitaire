@@ -82,11 +82,11 @@ Assumption for current status:
 
 ## J. Command Parser
 
-- `[not started]` Read user input safely from the terminal.
-- `[not started]` Parse STARTUP commands.
-- `[not started]` Parse PLAY commands.
-- `[not started]` Parse move commands of the form `<from>-><to>` without spaces around `->`.
-- `[not started]` Reject malformed commands without crashing.
+- `[done]` Read user input safely from the terminal.
+- `[done]` Parse STARTUP commands.
+- `[done]` Parse PLAY commands.
+- `[done]` Parse move commands of the form `<from>-><to>` without spaces around `->`.
+- `[done]` Reject malformed commands without crashing.
 
 ## K. Move Validation
 
