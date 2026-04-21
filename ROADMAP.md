@@ -66,11 +66,11 @@ Assumption for current status:
 
 ## H. Game Setup
 
-- `[not started]` Implement `P` to deal the current deck into the Yukon tableau layout.
-- `[not started]` Ensure row-wise dealing matches the assignment exactly.
-- `[not started]` Mark the correct cards hidden and visible at game start.
-- `[not started]` Reset foundations when a new play session begins.
-- `[not started]` Implement `Q` to leave PLAY phase and return to STARTUP while keeping the deck in memory.
+- `[done]` Implement `P` to deal the current deck into the Yukon tableau layout.
+- `[done]` Ensure row-wise dealing matches the assignment exactly.
+- `[done]` Mark the correct cards hidden and visible at game start.
+- `[done]` Reset foundations when a new play session begins.
+- `[done]` Implement `Q` to leave PLAY phase and return to STARTUP while keeping the deck in memory.
 
 ## I. Terminal Rendering
 
