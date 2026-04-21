@@ -50,11 +50,11 @@ Assumption for current status:
 
 ## F. Deck Loading And Saving
 
-- `[not started]` Implement `LD <filename>` with default deck generation when no filename is given.
-- `[not started]` Validate deck files for line format, duplicates, suit counts, and exact size of 52 cards.
-- `[not started]` Report the first file error with a useful line number.
-- `[not started]` Implement `SD <filename>` with default fallback filename.
-- `[not started]` Ensure load/save preserve deck order exactly.
+- `[done]` Implement `LD <filename>` with default deck generation when no filename is given.
+- `[done]` Validate deck files for line format, duplicates, suit counts, and exact size of 52 cards.
+- `[done]` Report the first file error with a useful line number.
+- `[done]` Implement `SD <filename>` with default fallback filename.
+- `[done]` Ensure load/save preserve deck order exactly.
 
 ## G. Shuffle Features
 
