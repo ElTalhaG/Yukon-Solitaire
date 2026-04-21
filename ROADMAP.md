@@ -58,11 +58,11 @@ Assumption for current status:
 
 ## G. Shuffle Features
 
-- `[not started]` Implement `SI <split>` interleaving shuffle with user-provided split.
-- `[not started]` Implement random split when `SI` is called without an argument.
-- `[not started]` Implement `SR` random insertion shuffle.
-- `[not started]` Validate shuffle preconditions such as deck existence and valid split range.
-- `[not started]` Seed and manage randomness responsibly for repeatable debugging if needed.
+- `[done]` Implement `SI <split>` interleaving shuffle with user-provided split.
+- `[done]` Implement random split when `SI` is called without an argument.
+- `[done]` Implement `SR` random insertion shuffle.
+- `[done]` Validate shuffle preconditions such as deck existence and valid split range.
+- `[done]` Seed and manage randomness responsibly for repeatable debugging if needed.
 
 ## H. Game Setup
 
