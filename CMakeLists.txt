@@ -20,6 +20,7 @@ target_compile_options(yukon_core PRIVATE -Wall -Wextra -Wpedantic)
 
 add_executable(yukon_cli
     src/cli/main.c
+    src/cli/render.c
 )
 
 target_link_libraries(yukon_cli PRIVATE yukon_core)
