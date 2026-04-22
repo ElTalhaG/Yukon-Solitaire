@@ -14,6 +14,7 @@ add_library(yukon_core
     src/core/shuffle.c
     src/core/game_setup.c
     src/core/move.c
+    src/core/command_engine.c
 )
 
 target_include_directories(yukon_core PUBLIC include)
