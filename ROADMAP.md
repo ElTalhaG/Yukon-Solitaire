@@ -136,19 +136,19 @@ Assumption for current status:
 
 ## Q. GUI Planning
 
-- `[not started]` Choose GUI approach: SDL in C or another language with C backend communication.
-- `[not started]` Define the GUI architecture around the shared backend.
-- `[not started]` Decide how moves are entered in the GUI.
-- `[not started]` Decide how game state is exposed from the backend to the GUI.
-- `[not started]` Gather any card assets or simple placeholders needed for display.
+- `[done]` Choose GUI approach: SDL in C or another language with C backend communication.
+- `[done]` Define the GUI architecture around the shared backend.
+- `[done]` Decide how moves are entered in the GUI.
+- `[done]` Decide how game state is exposed from the backend to the GUI.
+- `[done]` Gather any card assets or simple placeholders needed for display.
 
 ## R. GUI Implementation
 
-- `[not started]` Create the window and main event loop.
-- `[not started]` Draw tableau columns and foundation piles.
-- `[not started]` Draw face-up and face-down cards.
-- `[not started]` Support starting a game and restarting from the current deck.
-- `[not started]` Support legal moves and visual state updates.
+- `[done]` Create the window and main event loop.
+- `[done]` Draw tableau columns and foundation piles.
+- `[done]` Draw face-up and face-down cards.
+- `[done]` Support starting a game and restarting from the current deck.
+- `[done]` Support legal moves and visual state updates.
 
 ## S. GUI Polish
 
