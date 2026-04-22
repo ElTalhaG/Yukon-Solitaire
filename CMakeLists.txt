@@ -21,6 +21,7 @@ target_compile_options(yukon_core PRIVATE -Wall -Wextra -Wpedantic)
 
 add_executable(yukon_cli
     src/cli/main.c
+    src/cli/app.c
     src/cli/render.c
     src/cli/parser.c
 )

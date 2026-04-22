@@ -49,6 +49,7 @@ void game_state_init(GameState *game_state)
 
     /* A fresh program always begins in the STARTUP phase. */
     game_state->phase = GAME_PHASE_STARTUP;
+    game_state->startup_show_all = false;
 
     /* No command has been entered yet, so both UI strings start empty. */
     game_state->last_command[0] = '\0';
@@ -74,6 +75,5 @@ void game_state_reset_play_area(GameState *game_state)
 
     /* After clearing the play area, the program returns to STARTUP mode. */
     game_state->phase = GAME_PHASE_STARTUP;
-    game_state->last_command[0] = '\0';
-    game_state->message[0] = '\0';
+    game_state->startup_show_all = false;
 }

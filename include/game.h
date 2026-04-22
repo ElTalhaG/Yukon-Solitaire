@@ -67,6 +67,12 @@ typedef struct {
     /* Whether the program is waiting in STARTUP or actively playing. */
     GamePhase phase;
 
+    /*
+     * In STARTUP we sometimes want to show the deck as hidden cards and
+     * sometimes as visible cards after SW. This flag keeps that choice around.
+     */
+    bool startup_show_all;
+
     /* Last raw command entered by the player in the terminal UI. */
     char last_command[MAX_COMMAND_LENGTH];
 
