@@ -3,151 +3,15 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "deck_io.h"
+#include "command_engine.h"
 #include "game.h"
-#include "game_setup.h"
-#include "move.h"
 #include "parser.h"
 #include "render.h"
-#include "shuffle.h"
 
 /*
  * This is the actual terminal app loop now.
  * It is intentionally pretty direct: render, read, parse, execute, repeat.
  */
-
-static void set_message(GameState *game_state, const char *message)
-{
-    if (game_state == NULL || message == NULL) {
-        return;
-    }
-
-    strncpy(game_state->message, message, MAX_MESSAGE_LENGTH - 1);
-    game_state->message[MAX_MESSAGE_LENGTH - 1] = '\0';
-}
-
-static void remember_command(GameState *game_state, const char *command_text)
-{
-    if (game_state == NULL || command_text == NULL) {
-        return;
-    }
-
-    strncpy(game_state->last_command, command_text, MAX_COMMAND_LENGTH - 1);
-    game_state->last_command[MAX_COMMAND_LENGTH - 1] = '\0';
-}
-
-static int is_startup_only_command(CommandType type)
-{
-    return type == COMMAND_TYPE_LD ||
-           type == COMMAND_TYPE_SW ||
-           type == COMMAND_TYPE_SI ||
-           type == COMMAND_TYPE_SR ||
-           type == COMMAND_TYPE_SD ||
-           type == COMMAND_TYPE_QQ ||
-           type == COMMAND_TYPE_P;
-}
-
-static int is_play_only_command(CommandType type)
-{
-    return type == COMMAND_TYPE_Q ||
-           type == COMMAND_TYPE_MOVE;
-}
-
-static int execute_startup_command(GameState *game_state, const ParsedCommand *command)
-{
-    if (command->type == COMMAND_TYPE_LD) {
-        if (command->has_argument) {
-            if (!deck_load_from_file(&game_state->deck, command->argument,
-                                     game_state->message, sizeof(game_state->message))) {
-                return 1;
-            }
-        } else {
-            if (!deck_load_default(&game_state->deck,
-                                   game_state->message, sizeof(game_state->message))) {
-                return 1;
-            }
-        }
-
-        game_state->startup_show_all = false;
-        return 1;
-    }
-
-    if (command->type == COMMAND_TYPE_SW) {
-        if (game_state->deck.size != DECK_CARD_COUNT) {
-            set_message(game_state, "No deck is loaded.");
-            return 1;
-        }
-
-        game_state->startup_show_all = true;
-        set_message(game_state, "OK");
-        return 1;
-    }
-
-    if (command->type == COMMAND_TYPE_SI) {
-        if (command->has_split) {
-            if (!deck_shuffle_interleave(&game_state->deck, command->split,
-                                         game_state->message, sizeof(game_state->message))) {
-                return 1;
-            }
-        } else {
-            if (!deck_shuffle_interleave_random_split(&game_state->deck,
-                                                      game_state->message, sizeof(game_state->message))) {
-                return 1;
-            }
-        }
-
-        game_state->startup_show_all = false;
-        return 1;
-    }
-
-    if (command->type == COMMAND_TYPE_SR) {
-        if (!deck_shuffle_random_insert(&game_state->deck,
-                                        game_state->message, sizeof(game_state->message))) {
-            return 1;
-        }
-
-        game_state->startup_show_all = false;
-        return 1;
-    }
-
-    if (command->type == COMMAND_TYPE_SD) {
-        if (!deck_save_to_file(&game_state->deck,
-                               command->has_argument ? command->argument : NULL,
-                               game_state->message, sizeof(game_state->message))) {
-            return 1;
-        }
-
-        return 1;
-    }
-
-    if (command->type == COMMAND_TYPE_P) {
-        game_state->startup_show_all = false;
-        game_start_play(game_state, game_state->message, sizeof(game_state->message));
-        return 1;
-    }
-
-    return 0;
-}
-
-static int execute_play_command(GameState *game_state, const ParsedCommand *command)
-{
-    if (command->type == COMMAND_TYPE_Q) {
-        game_quit_play(game_state);
-        set_message(game_state, "OK");
-        return 1;
-    }
-
-    if (command->type == COMMAND_TYPE_MOVE) {
-        if (game_apply_move(game_state, &command->from, &command->to) &&
-            game_is_won(game_state)) {
-            set_message(game_state, "OK - Game won.");
-        }
-
-        return 1;
-    }
-
-    return 0;
-}
 
 int run_cli_application(void)
 {
@@ -166,31 +30,16 @@ int run_cli_application(void)
         }
 
         putchar('\n');
-        remember_command(&game_state, input);
+        game_remember_command(&game_state, input);
 
         if (!parse_command(input, &command)) {
-            set_message(&game_state, "Invalid command.");
+            strncpy(game_state.message, "Invalid command.", MAX_MESSAGE_LENGTH - 1);
+            game_state.message[MAX_MESSAGE_LENGTH - 1] = '\0';
             continue;
         }
 
-        if (game_state.phase == GAME_PHASE_STARTUP && is_play_only_command(command.type)) {
-            set_message(&game_state, "Command not available in the STARTUP phase.");
-            continue;
-        }
-
-        if (game_state.phase == GAME_PHASE_PLAY && is_startup_only_command(command.type)) {
-            set_message(&game_state, "Command not available in the PLAY phase.");
-            continue;
-        }
-
-        if (command.type == COMMAND_TYPE_QQ) {
+        if (game_execute_command(&game_state, &command) == COMMAND_EXECUTION_QUIT) {
             break;
-        }
-
-        if (game_state.phase == GAME_PHASE_STARTUP) {
-            execute_startup_command(&game_state, &command);
-        } else {
-            execute_play_command(&game_state, &command);
         }
     }
 
