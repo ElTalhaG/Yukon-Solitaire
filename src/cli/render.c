@@ -10,6 +10,8 @@
  * handout shows the Yukon tableau in the terminal window.
  */
 
+static const int STARTUP_COLUMN_CARD_COUNTS[TABLEAU_COLUMNS] = {1, 6, 7, 8, 9, 10, 11};
+
 static int max_tableau_height(const GameState *game_state)
 {
     int column_index;
@@ -114,6 +116,60 @@ static void render_tableau_row(FILE *stream, const GameState *game_state, int ro
     fputc('\n', stream);
 }
 
+static void render_startup_row(FILE *stream, const GameState *game_state, int row_index)
+{
+    int column_index;
+    int deck_position;
+    int previous_row;
+    const Card *current;
+    char card_text[4];
+
+    deck_position = 0;
+    for (previous_row = 0; previous_row < row_index; previous_row++) {
+        for (column_index = 0; column_index < TABLEAU_COLUMNS; column_index++) {
+            if (previous_row < STARTUP_COLUMN_CARD_COUNTS[column_index]) {
+                deck_position++;
+            }
+        }
+    }
+
+    /*
+     * Startup view still uses the same Yukon layout, but the cards come from
+     * the saved deck rather than the live tableau columns.
+     */
+    for (column_index = 0; column_index < TABLEAU_COLUMNS; column_index++) {
+        if (row_index < STARTUP_COLUMN_CARD_COUNTS[column_index]) {
+            current = card_list_get_at(game_state->deck.top, deck_position);
+
+            if (current != NULL) {
+                if (game_state->startup_show_all) {
+                    format_or_blank(current, card_text);
+                } else {
+                    card_text[0] = '[';
+                    card_text[1] = ' ';
+                    card_text[2] = ']';
+                    card_text[3] = '\0';
+                }
+
+                fputs(card_text, stream);
+            }
+
+            deck_position++;
+        }
+
+        if (column_index + 1 < TABLEAU_COLUMNS) {
+            fputc('\t', stream);
+        }
+    }
+
+    if (row_index % 2 == 0 && row_index / 2 < FOUNDATION_COUNT) {
+        fputs("\t\t", stream);
+        render_foundation_slot(stream, game_state, row_index / 2);
+    }
+
+    fputc('\n', stream);
+}
+
 static void render_footer(FILE *stream, const GameState *game_state)
 {
     fprintf(stream, "\nLast Command:%s\n", game_state->last_command);
@@ -132,17 +188,29 @@ void render_game_state(FILE *stream, const GameState *game_state)
 
     render_header(stream);
 
-    row_count = max_tableau_height(game_state);
-    if (row_count == 0) {
+    if (game_state->phase == GAME_PHASE_STARTUP) {
         /*
-         * The startup screen still needs enough rows to show all foundations,
-         * even before any cards have been loaded or dealt into the tableau.
+         * Even before P is pressed, the assignment wants the deck shown in the
+         * Yukon layout. So startup rendering reads straight from the saved deck.
          */
-        row_count = FOUNDATION_COUNT * 2 - 1;
-    }
+        if (game_state->deck.size > 0) {
+            row_count = STARTUP_COLUMN_CARD_COUNTS[TABLEAU_COLUMNS - 1];
+        } else {
+            row_count = FOUNDATION_COUNT * 2 - 1;
+        }
 
-    for (row_index = 0; row_index < row_count; row_index++) {
-        render_tableau_row(stream, game_state, row_index);
+        for (row_index = 0; row_index < row_count; row_index++) {
+            render_startup_row(stream, game_state, row_index);
+        }
+    } else {
+        row_count = max_tableau_height(game_state);
+        if (row_count == 0) {
+            row_count = FOUNDATION_COUNT * 2 - 1;
+        }
+
+        for (row_index = 0; row_index < row_count; row_index++) {
+            render_tableau_row(stream, game_state, row_index);
+        }
     }
 
     render_footer(stream, game_state);

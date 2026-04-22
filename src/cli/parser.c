@@ -384,6 +384,8 @@ static bool parse_startup_or_play_command(char *text, ParsedCommand *command)
 
 bool read_command_line(FILE *stream, char *buffer, int buffer_size)
 {
+    int ch;
+
     if (stream == NULL || buffer == NULL || buffer_size <= 1) {
         return false;
     }
@@ -394,6 +396,16 @@ bool read_command_line(FILE *stream, char *buffer, int buffer_size)
      */
     if (fgets(buffer, buffer_size, stream) == NULL) {
         return false;
+    }
+
+    /*
+     * If the user pasted something longer than the buffer, we throw away the
+     * rest of that line so the next read does not start with leftover junk.
+     */
+    if (strchr(buffer, '\n') == NULL) {
+        do {
+            ch = fgetc(stream);
+        } while (ch != '\n' && ch != EOF);
     }
 
     trim_line_endings(buffer);
