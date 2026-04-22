@@ -122,14 +122,17 @@ class YukonGui:
         self.root = root
         self.bridge = bridge
         self.root.title("Yukon Solitaire")
-        self.root.geometry("1260x860")
+        self.root.geometry("1420x900")
         self.root.configure(bg="#1c4a2a")
 
         self.status_var = tk.StringVar()
+        self.phase_var = tk.StringVar()
+        self.last_command_var = tk.StringVar()
         self.command_var = tk.StringVar()
+        self.last_popup_message = ""
 
         self._build_toolbar()
-        self._build_canvas()
+        self._build_content()
         self._build_status()
         self.refresh()
 
@@ -143,8 +146,10 @@ class YukonGui:
             ("Show Deck", lambda: self.run_command("SW")),
             ("Interleave", lambda: self.run_command("SI")),
             ("Random Shuffle", lambda: self.run_command("SR")),
+            ("Save Deck", self.save_file),
             ("Start Game", lambda: self.run_command("P")),
             ("Quit Game", lambda: self.run_command("Q")),
+            ("Refresh", lambda: self.refresh()),
         ]
 
         for label, callback in buttons:
@@ -160,18 +165,86 @@ class YukonGui:
         tk.Entry(toolbar, textvariable=self.command_var, width=28).pack(side="left", padx=10)
         tk.Button(toolbar, text="Send Command", command=self.send_manual_command).pack(side="left", padx=4)
 
-    def _build_canvas(self) -> None:
+    def _build_content(self) -> None:
+        content = tk.Frame(self.root, bg="#1c4a2a")
+        content.pack(fill="both", expand=True, padx=12, pady=12)
+
         self.canvas = tk.Canvas(
-            self.root,
+            content,
             bg="#1c4a2a",
             highlightthickness=0,
-            width=1220,
+            width=1040,
             height=700,
         )
-        self.canvas.pack(fill="both", expand=True, padx=12, pady=12)
+        self.canvas.pack(side="left", fill="both", expand=True)
+
+        side_panel = tk.Frame(content, bg="#102918", width=280, padx=14, pady=14)
+        side_panel.pack(side="right", fill="y", padx=(14, 0))
+        side_panel.pack_propagate(False)
+
+        tk.Label(
+            side_panel,
+            text="Quick Info",
+            bg="#102918",
+            fg="#f4f0e6",
+            anchor="w",
+            font=("Courier", 16, "bold"),
+        ).pack(fill="x", pady=(0, 10))
+
+        tk.Label(
+            side_panel,
+            textvariable=self.phase_var,
+            bg="#274c77",
+            fg="#f4f0e6",
+            anchor="w",
+            justify="left",
+            padx=10,
+            pady=8,
+            font=("Courier", 12, "bold"),
+        ).pack(fill="x", pady=(0, 8))
+
+        tk.Label(
+            side_panel,
+            textvariable=self.last_command_var,
+            bg="#1f3b2c",
+            fg="#f4f0e6",
+            anchor="w",
+            justify="left",
+            padx=10,
+            pady=8,
+            wraplength=240,
+            font=("Courier", 11),
+        ).pack(fill="x", pady=(0, 14))
+
+        tips = (
+            "Command examples\n"
+            "LD\n"
+            "SW\n"
+            "SI 26\n"
+            "SR\n"
+            "P\n"
+            "C1->F1\n"
+            "C6:4H->C4\n"
+            "F1->C3\n"
+            "Q\n\n"
+            "GUI note\n"
+            "For now the GUI uses the same command language as the terminal version.\n"
+            "That sounds simple, but honestly it is pretty useful while we test the backend."
+        )
+
+        tk.Label(
+            side_panel,
+            text=tips,
+            bg="#102918",
+            fg="#d9e4d0",
+            anchor="nw",
+            justify="left",
+            wraplength=240,
+            font=("Courier", 11),
+        ).pack(fill="both", expand=True)
 
     def _build_status(self) -> None:
-        status = tk.Label(
+        self.status_label = tk.Label(
             self.root,
             textvariable=self.status_var,
             bg="#13351d",
@@ -182,7 +255,7 @@ class YukonGui:
             pady=10,
             font=("Courier", 12),
         )
-        status.pack(fill="x")
+        self.status_label.pack(fill="x")
 
     def load_file(self) -> None:
         filename = filedialog.askopenfilename(
@@ -191,6 +264,15 @@ class YukonGui:
         )
         if filename:
             self.run_command(f"LD {filename}")
+
+    def save_file(self) -> None:
+        filename = filedialog.asksaveasfilename(
+            title="Save deck file",
+            defaultextension=".txt",
+            filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
+        )
+        if filename:
+            self.run_command(f"SD {filename}")
 
     def send_manual_command(self) -> None:
         command = self.command_var.get().strip()
@@ -219,9 +301,36 @@ class YukonGui:
         else:
             self._draw_tableau(state)
 
-        self.status_var.set(
-            f"Phase: {state['phase']}    Last Command: {state['last_command']}    Message: {state['message']}"
-        )
+        self.phase_var.set(f"Phase: {state['phase']}\nDeck cards: {len(state['deck_cards'])}")
+        self.last_command_var.set(f"Last Command:\n{state['last_command'] or '(none yet)'}")
+        self.status_var.set(f"Message: {state['message'] or '(no message yet)'}")
+        self._apply_status_style(state)
+        self._show_popup_feedback(state)
+
+    def _apply_status_style(self, state: dict) -> None:
+        message = state["message"]
+
+        if "won" in message.lower():
+            background = "#365b2c"
+        elif "invalid" in message.lower() or "not available" in message.lower():
+            background = "#6b2d2d"
+        elif message == "OK":
+            background = "#234b3a"
+        else:
+            background = "#13351d"
+
+        self.status_label.configure(bg=background)
+
+    def _show_popup_feedback(self, state: dict) -> None:
+        message = state["message"]
+
+        # We only pop on the game-won message because invalid-move popups every
+        # single time get annoying really fast. The red status bar is enough there.
+        if "won" in message.lower() and message != self.last_popup_message:
+            self.last_popup_message = message
+            messagebox.showinfo("You won", message)
+        elif "won" not in message.lower():
+            self.last_popup_message = ""
 
     def _draw_title(self, state: dict) -> None:
         self.canvas.create_text(
@@ -232,13 +341,21 @@ class YukonGui:
             fill="#f4f0e6",
             font=("Courier", 18, "bold"),
         )
+        self.canvas.create_text(
+            20,
+            48,
+            anchor="nw",
+            text="Shared C backend + Tkinter frontend",
+            fill="#b8c7b4",
+            font=("Courier", 11),
+        )
 
     def _draw_card(self, x: int, y: int, code: str, face_up: bool) -> None:
         if face_up:
             fill = "#f9f4ea"
             outline = "#2a2a2a"
             text = code
-            text_color = "#111111"
+            text_color = "#9a1f1f" if code.endswith(("H", "D")) else "#111111"
         else:
             fill = "#415a77"
             outline = "#223447"
@@ -287,12 +404,21 @@ class YukonGui:
                 anchor="w",
                 font=("Courier", 11),
             )
+            if foundation["assigned"]:
+                self.canvas.create_text(
+                    x + 120,
+                    y + 34,
+                    text=f"suit={foundation['top_code'][-1]}",
+                    fill="#b8c7b4",
+                    anchor="w",
+                    font=("Courier", 10),
+                )
             y += 105
 
     def _draw_startup_deck(self, state: dict) -> None:
         deck_cards = state["deck_cards"]
         x_positions = [40, 150, 260, 370, 480, 590, 700]
-        y_start = 80
+        y_start = 92
         deck_position = 0
 
         for previous_row in range(max(self.STARTUP_COLUMN_CARD_COUNTS)):
@@ -304,7 +430,7 @@ class YukonGui:
                         face_up = state["show_all"]
                         self._draw_card(
                             x_positions[column_index],
-                            y_start + previous_row * 48,
+                            y_start + previous_row * 50,
                             code,
                             face_up,
                         )
@@ -313,20 +439,30 @@ class YukonGui:
         for column_index in range(7):
             self.canvas.create_text(
                 x_positions[column_index] + 39,
-                58,
+                72,
                 text=f"C{column_index + 1}",
                 fill="#f4f0e6",
                 font=("Courier", 14, "bold"),
             )
 
+        if not deck_cards:
+            self.canvas.create_text(
+                60,
+                120,
+                anchor="nw",
+                text="No deck loaded yet.\nUse Load Default or Load File to begin.",
+                fill="#d9e4d0",
+                font=("Courier", 13),
+            )
+
     def _draw_tableau(self, state: dict) -> None:
         x_positions = [40, 150, 260, 370, 480, 590, 700]
-        y_start = 80
+        y_start = 92
 
         for column_index in range(7):
             self.canvas.create_text(
                 x_positions[column_index] + 39,
-                58,
+                72,
                 text=f"C{column_index + 1}",
                 fill="#f4f0e6",
                 font=("Courier", 14, "bold"),
@@ -335,7 +471,7 @@ class YukonGui:
             for row_index, card in enumerate(state["tableau"].get(column_index, [])):
                 self._draw_card(
                     x_positions[column_index],
-                    y_start + row_index * 48,
+                    y_start + row_index * 50,
                     card["code"],
                     card["face_up"],
                 )
