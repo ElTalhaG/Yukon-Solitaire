@@ -61,9 +61,19 @@ static void render_header(FILE *stream)
 static void render_foundation_slot(FILE *stream, const GameState *game_state, int foundation_index)
 {
     const Card *top_card;
+    const Card *current;
     char foundation_text[4];
 
-    top_card = game_state->foundations[foundation_index].top;
+    /*
+     * Foundations grow at the tail, so the visible "top" card is the last node.
+     * Using the head here would look fine for one card and then go wrong later.
+     */
+    current = game_state->foundations[foundation_index].top;
+    while (current != NULL && current->next != NULL) {
+        current = current->next;
+    }
+
+    top_card = current;
     format_or_blank(top_card, foundation_text);
 
     if (foundation_text[0] == '\0') {
