@@ -152,18 +152,18 @@ Assumption for current status:
 
 ## S. GUI Polish
 
-- `[not started]` Show clear feedback for invalid moves.
-- `[not started]` Show win state when the game is completed.
-- `[not started]` Improve layout spacing and readability.
-- `[not started]` Keep the GUI simple but fully functional.
+- `[done]` Show clear feedback for invalid moves.
+- `[done]` Show win state when the game is completed.
+- `[done]` Improve layout spacing and readability.
+- `[done]` Keep the GUI simple but fully functional.
 
 ## T. Testing
 
-- `[not started]` Create manual test cases for every STARTUP command.
-- `[not started]` Create manual test cases for every PLAY command.
-- `[not started]` Test legal and illegal tableau moves.
-- `[not started]` Test foundation assignment and ordering rules.
-- `[not started]` Test file loading edge cases and malformed deck files.
+- `[done]` Create manual test cases for every STARTUP command.
+- `[done]` Create manual test cases for every PLAY command.
+- `[done]` Test legal and illegal tableau moves.
+- `[done]` Test foundation assignment and ordering rules.
+- `[done]` Test file loading edge cases and malformed deck files.
 
 ## U. Memory And Quality Checks
 
