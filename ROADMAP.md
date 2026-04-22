@@ -90,27 +90,27 @@ Assumption for current status:
 
 ## K. Move Validation
 
-- `[not started]` Validate source selection from tableau columns.
-- `[not started]` Validate source selection from foundations.
-- `[not started]` Validate moves from column to column.
-- `[not started]` Validate moves from column to foundation.
-- `[not started]` Validate moves from foundation back to column.
+- `[done]` Validate source selection from tableau columns.
+- `[done]` Validate source selection from foundations.
+- `[done]` Validate moves from column to column.
+- `[done]` Validate moves from column to foundation.
+- `[done]` Validate moves from foundation back to column.
 
 ## L. Move Execution
 
-- `[not started]` Move a single card from column bottom when requested.
-- `[not started]` Move a selected card plus all visible cards beneath it as one segment.
-- `[not started]` Move only the top card from a foundation.
-- `[not started]` Reveal a face-down card when it becomes exposed after a move.
-- `[not started]` Update last-message state to `OK` or the relevant error message.
+- `[done]` Move a single card from column bottom when requested.
+- `[done]` Move a selected card plus all visible cards beneath it as one segment.
+- `[done]` Move only the top card from a foundation.
+- `[done]` Reveal a face-down card when it becomes exposed after a move.
+- `[done]` Update last-message state to `OK` or the relevant error message.
 
 ## M. Foundation Logic
 
-- `[not started]` Allow any Ace on any empty foundation.
-- `[not started]` Lock each foundation to the suit of its first Ace.
-- `[not started]` Enforce ascending order from Ace to King.
-- `[not started]` Reject invalid suit and rank placements.
-- `[not started]` Detect when all cards have reached the foundations.
+- `[done]` Allow any Ace on any empty foundation.
+- `[done]` Lock each foundation to the suit of its first Ace.
+- `[done]` Enforce ascending order from Ace to King.
+- `[done]` Reject invalid suit and rank placements.
+- `[done]` Detect when all cards have reached the foundations.
 
 ## N. Phase Management
 
