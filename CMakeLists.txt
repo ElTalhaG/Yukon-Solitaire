@@ -28,3 +28,12 @@ add_executable(yukon_cli
 )
 
 target_link_libraries(yukon_cli PRIVATE yukon_core)
+
+add_executable(yukon_gui_bridge
+    src/gui/bridge.c
+    src/cli/parser.c
+)
+
+target_link_libraries(yukon_gui_bridge PRIVATE yukon_core)
+target_include_directories(yukon_gui_bridge PRIVATE include)
+target_compile_options(yukon_gui_bridge PRIVATE -Wall -Wextra -Wpedantic)
