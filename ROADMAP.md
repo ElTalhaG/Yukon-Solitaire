@@ -129,10 +129,10 @@ Assumption for current status:
 
 ## P. Backend Refactoring For Reuse
 
-- `[not started]` Separate core game logic from terminal-specific code.
-- `[not started]` Create a clean interface the GUI can reuse.
-- `[not started]` Minimize duplicated logic between text and GUI versions.
-- `[not started]` Move rendering concerns out of the backend logic layer.
+- `[done]` Separate core game logic from terminal-specific code.
+- `[done]` Create a clean interface the GUI can reuse.
+- `[done]` Minimize duplicated logic between text and GUI versions.
+- `[done]` Move rendering concerns out of the backend logic layer.
 
 ## Q. GUI Planning
 
