@@ -114,18 +114,18 @@ Assumption for current status:
 
 ## N. Phase Management
 
-- `[not started]` Block STARTUP-only commands during PLAY.
-- `[not started]` Block PLAY-only commands during STARTUP.
-- `[not started]` Keep game state transitions predictable across `LD`, `P`, `Q`, and `QQ`.
-- `[not started]` Exit cleanly on `QQ`.
+- `[done]` Block STARTUP-only commands during PLAY.
+- `[done]` Block PLAY-only commands during STARTUP.
+- `[done]` Keep game state transitions predictable across `LD`, `P`, `Q`, and `QQ`.
+- `[done]` Exit cleanly on `QQ`.
 
 ## O. Error Handling And Robustness
 
-- `[not started]` Prevent crashes on empty input.
-- `[not started]` Prevent crashes on invalid filenames and missing files.
-- `[not started]` Prevent crashes on malformed commands and impossible moves.
-- `[not started]` Handle memory allocation failures gracefully where possible.
-- `[not started]` Standardize user-facing messages for easier debugging and testing.
+- `[done]` Prevent crashes on empty input.
+- `[done]` Prevent crashes on invalid filenames and missing files.
+- `[done]` Prevent crashes on malformed commands and impossible moves.
+- `[done]` Handle memory allocation failures gracefully where possible.
+- `[done]` Standardize user-facing messages for easier debugging and testing.
 
 ## P. Backend Refactoring For Reuse
 
