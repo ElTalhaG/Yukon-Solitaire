@@ -199,10 +199,10 @@ Assumption for current status:
 
 ## Y. Final Validation
 
-- `[not started]` Re-run the manual test checklist on the final code.
-- `[not started]` Verify the game starts, plays, and exits cleanly.
-- `[not started]` Verify the GUI uses the same backend logic as the terminal version.
-- `[not started]` Verify memory cleanup on exit.
+- `[done]` Re-run the manual test checklist on the final code.
+- `[done]` Verify the game starts, plays, and exits cleanly.
+- `[done]` Verify the GUI uses the same backend logic as the terminal version.
+- `[done]` Verify memory cleanup on exit.
 
 ## Z. Delivery
 
