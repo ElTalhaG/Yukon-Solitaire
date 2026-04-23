@@ -167,10 +167,10 @@ Assumption for current status:
 
 ## U. Memory And Quality Checks
 
-- `[not started]` Compile with strict warnings enabled.
-- `[not started]` Fix all compiler warnings that matter.
-- `[not started]` Run leak checks and memory diagnostics.
-- `[not started]` Review ownership of every allocated node and game structure.
+- `[done]` Compile with strict warnings enabled.
+- `[done]` Fix all compiler warnings that matter.
+- `[done]` Run leak checks and memory diagnostics.
+- `[done]` Review ownership of every allocated node and game structure.
 
 ## V. Optional Extensions
 
@@ -184,18 +184,18 @@ Assumption for current status:
 
 ## W. Report Writing
 
-- `[not started]` Create the report structure early instead of leaving it to the end.
-- `[not started]` Add cover page with project title, names, and photos.
-- `[not started]` Write individualized contribution statements for each group member.
-- `[not started]` Write requirements, analysis, design, implementation, tests, discussion, conclusion, and appendix sections.
-- `[not started]` Include a short discussion of how generative AI was used in the project.
+- `[done]` Create the report structure early instead of leaving it to the end.
+- `[in progress]` Add cover page with project title, names, and photos.
+- `[in progress]` Write individualized contribution statements for each group member.
+- `[in progress]` Write requirements, analysis, design, implementation, tests, discussion, conclusion, and appendix sections.
+- `[in progress]` Include a short discussion of how generative AI was used in the project.
 
 ## X. Final Submission Preparation
 
-- `[not started]` Verify both terminal and GUI versions are included and working.
-- `[not started]` Clean the repository structure for submission.
-- `[not started]` Make sure build and run instructions are clear.
-- `[not started]` Make sure required files are included and unnecessary files are excluded.
+- `[done]` Verify both terminal and GUI versions are included and working.
+- `[done]` Clean the repository structure for submission.
+- `[done]` Make sure build and run instructions are clear.
+- `[done]` Make sure required files are included and unnecessary files are excluded.
 
 ## Y. Final Validation
 
