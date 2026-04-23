@@ -138,6 +138,10 @@ class YukonGui:
     def _build_toolbar(self) -> None:
         toolbar = tk.Frame(self.root, bg="#13351d", padx=10, pady=10)
         toolbar.pack(fill="x")
+        action_row = tk.Frame(toolbar, bg="#13351d")
+        action_row.pack(fill="x")
+        command_row = tk.Frame(toolbar, bg="#13351d")
+        command_row.pack(fill="x", pady=(10, 0))
 
         buttons = [
             ("Load Default", lambda: self.run_command("LD")),
@@ -153,7 +157,7 @@ class YukonGui:
 
         for label, callback in buttons:
             tk.Button(
-                toolbar,
+                action_row,
                 text=label,
                 command=callback,
                 bg="#e8d8b8",
@@ -161,8 +165,24 @@ class YukonGui:
                 padx=10,
             ).pack(side="left", padx=4)
 
-        tk.Entry(toolbar, textvariable=self.command_var, width=28).pack(side="left", padx=10)
-        tk.Button(toolbar, text="Send Command", command=self.send_manual_command).pack(side="left", padx=4)
+        tk.Label(
+            command_row,
+            text="Manual Command:",
+            bg="#13351d",
+            fg="#f4f0e6",
+            font=("Courier", 11, "bold"),
+        ).pack(side="left", padx=(4, 8))
+        tk.Entry(command_row, textvariable=self.command_var, width=36).pack(
+            side="left", fill="x", expand=True, padx=(0, 8)
+        )
+        tk.Button(
+            command_row,
+            text="Send Command",
+            command=self.send_manual_command,
+            bg="#e8d8b8",
+            relief="raised",
+            padx=10,
+        ).pack(side="left", padx=4)
 
     def _build_content(self) -> None:
         content = tk.Frame(self.root, bg="#1c4a2a")
