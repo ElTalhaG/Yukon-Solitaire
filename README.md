@@ -67,6 +67,18 @@ The GUI tries a few common places for the bridge binary:
 - `cmake-build-release/yukon_gui_bridge`
 - `./yukon_gui_bridge`
 
+### macOS + Homebrew note
+
+If you use Homebrew Python on macOS, `tkinter` may be missing even though Python itself works.
+
+For the Python `3.12` setup used in this project, the fix is:
+
+```bash
+brew install python-tk@3.12
+```
+
+After that, the project virtual environment can use Tkinter normally.
+
 ## Current implemented scope
 
 Already implemented in the repo:
