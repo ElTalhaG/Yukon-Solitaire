@@ -67,7 +67,7 @@ The GUI tries a few common places for the bridge binary:
 - `cmake-build-release/yukon_gui_bridge`
 - `./yukon_gui_bridge`
 
-### macOS + Homebrew note
+### for users with macOS + Homebrew "note"
 
 If you use Homebrew Python on macOS, `tkinter` may be missing even though Python itself works.
 
