@@ -50,7 +50,63 @@ After building, run:
 ./build/yukon_cli
 ```
 
+If the project was built by CLion, the executable is normally here instead:
+
+```bash
+./cmake-build-debug/yukon_cli
+```
+
 Or in CLion just run the `yukon_cli` target.
+
+### Terminal command guide
+
+The terminal program has two phases:
+- STARTUP: load, show, shuffle, save, start, or quit
+- PLAY: move cards, quit the current game, or quit the program
+
+Useful STARTUP commands:
+- `LD`: load the default ordered deck
+- `LD <filename>`: load a deck from a file
+- `SW`: show the currently loaded deck
+- `SI 26`: interleave shuffle with split position 26
+- `SI`: interleave shuffle with a random split
+- `SR`: random insertion shuffle
+- `SD <filename>`: save the current deck order
+- `P`: start the game
+- `QQ`: quit the program
+
+Useful PLAY commands:
+- `C1->F1`: move the bottom card from column 1 to foundation 1
+- `C2->C7`: move the bottom card from column 2 to column 7
+- `C5:JD->C1`: move `JD` and all visible cards below it from column 5 to column 1
+- `F1->C3`: move the top foundation card from foundation 1 back to column 3
+- `Q`: quit the current game and return to STARTUP
+- `QQ`: quit the program
+
+There must be no spaces around `->`.
+
+Good quick test flow:
+
+```text
+LD
+SW
+P
+C1->F1
+Q
+QQ
+```
+
+Good selected-card move format:
+
+```text
+C<source column>:<card code>->C<destination column>
+```
+
+Example:
+
+```text
+C6:4H->C4
+```
 
 ## Run the GUI version
 
