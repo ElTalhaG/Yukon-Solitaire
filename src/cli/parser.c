@@ -143,6 +143,7 @@ static bool parse_column_number(char prefix, const char *text, int *pile_index)
 static bool parse_move_source(const char *text, MoveReference *reference)
 {
     char card_code[3];
+    char column_code[3];
     const char *separator;
 
     if (text == NULL || reference == NULL) {
@@ -180,7 +181,16 @@ static bool parse_move_source(const char *text, MoveReference *reference)
         return false;
     }
 
-    if (!parse_column_number('C', text, &reference->pile_index) ||
+    /*
+     * At this point text is something like "C5:JD". The column parser only
+     * understands the small "C5" part, so we copy just those two characters
+     * before checking the selected card after ':'.
+     */
+    column_code[0] = text[0];
+    column_code[1] = text[1];
+    column_code[2] = '\0';
+
+    if (!parse_column_number('C', column_code, &reference->pile_index) ||
         reference->pile_index < 0 || reference->pile_index >= TABLEAU_COLUMNS) {
         return false;
     }
