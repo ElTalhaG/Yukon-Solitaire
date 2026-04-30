@@ -50,7 +50,8 @@ After building, run:
 ./build/yukon_cli
 ```
 
-If the project was built by CLion, the executable is normally here instead:
+Better using your build-in terminal with the respective project path. 
+The executable is here, just copy-paste:
 
 ```bash
 ./cmake-build-debug/yukon_cli
