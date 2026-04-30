@@ -143,7 +143,17 @@ static void render_startup_row(FILE *stream, const GameState *game_state, int ro
 
             if (current != NULL) {
                 if (game_state->startup_show_all) {
-                    format_or_blank(current, card_text);
+                    /*
+                     * SW means "show the startup deck", even though the deck
+                     * cards themselves are still stored as face down. So here
+                     * we print the real card code directly instead of using the
+                     * normal display formatter that would hide it as "[ ]".
+                     */
+                    if (!card_format_face_up(current, card_text)) {
+                        card_text[0] = '?';
+                        card_text[1] = '?';
+                        card_text[2] = '\0';
+                    }
                 } else {
                     card_text[0] = '[';
                     card_text[1] = ' ';
