@@ -5,6 +5,7 @@
 #include "command_engine.h"
 #include "game.h"
 #include "parser.h"
+#include "timer.h"
 
 /*
  * This file is the little adapter between the shared C backend and the Python GUI.
@@ -58,6 +59,7 @@ static void dump_state(FILE *stream, const GameState *game_state)
     fprintf(stream, "SHOW_ALL\t%d\n", game_state->startup_show_all ? 1 : 0);
     fprintf(stream, "LAST_COMMAND\t%s\n", game_state->last_command);
     fprintf(stream, "MESSAGE\t%s\n", game_state->message);
+    fprintf(stream, "ELAPSED_SECONDS\t%d\n", game_timer_elapsed_seconds(game_state));
     fprintf(stream, "DECK_SIZE\t%d\n", game_state->deck.size);
 
     current = game_state->deck.top;

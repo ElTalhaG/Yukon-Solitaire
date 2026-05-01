@@ -4,6 +4,7 @@
 
 #include "card.h"
 #include "list.h"
+#include "timer.h"
 
 /*
  * The terminal output is rendered row by row so it matches the way the course
@@ -182,8 +183,13 @@ static void render_startup_row(FILE *stream, const GameState *game_state, int ro
 
 static void render_footer(FILE *stream, const GameState *game_state)
 {
+    char timer_text[16];
+
+    game_timer_format(game_timer_elapsed_seconds(game_state), timer_text, sizeof(timer_text));
+
     fprintf(stream, "\nLast Command:%s\n", game_state->last_command);
     fprintf(stream, "Message:%s\n", game_state->message);
+    fprintf(stream, "Timer:%s\n", timer_text);
     fputs("INPUT > ", stream);
 }
 

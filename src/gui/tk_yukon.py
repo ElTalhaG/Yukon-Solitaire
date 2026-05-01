@@ -7,6 +7,18 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 
 
+def format_elapsed_time(seconds: int) -> str:
+    # Keep the GUI timer format close to the C terminal format: MM:SS first.
+    seconds = max(0, seconds)
+    hours, remainder = divmod(seconds, 3600)
+    minutes, remaining_seconds = divmod(remainder, 60)
+
+    if hours:
+        return f"{hours}:{minutes:02d}:{remaining_seconds:02d}"
+
+    return f"{minutes:02d}:{remaining_seconds:02d}"
+
+
 class BackendBridge:
     def __init__(self, bridge_path: str | None = None) -> None:
         self.bridge_path = bridge_path or self._guess_bridge_path()
@@ -45,6 +57,7 @@ class BackendBridge:
             "show_all": False,
             "last_command": "",
             "message": "",
+            "elapsed_seconds": 0,
             "deck_cards": [],
             "foundations": {},
             "tableau": {index: [] for index in range(7)},
@@ -79,6 +92,8 @@ class BackendBridge:
                 state["last_command"] = parts[1] if len(parts) > 1 else ""
             elif tag == "MESSAGE":
                 state["message"] = parts[1] if len(parts) > 1 else ""
+            elif tag == "ELAPSED_SECONDS":
+                state["elapsed_seconds"] = int(parts[1])
             elif tag == "DECK_CARD":
                 state["deck_cards"].append(
                     {"index": int(parts[1]), "code": parts[2], "face_up": parts[3] == "1"}
@@ -100,6 +115,17 @@ class BackendBridge:
             raise RuntimeError("Bridge stdin is not available.")
 
         self.process.stdin.write(command + "\n")
+        self.process.stdin.flush()
+        self.state = self._read_state()
+        return self.state
+
+    def request_state(self) -> dict:
+        if self.process.stdin is None:
+            raise RuntimeError("Bridge stdin is not available.")
+
+        # The bridge understands this private command and answers with the
+        # newest state without changing the actual game.
+        self.process.stdin.write("__STATE__\n")
         self.process.stdin.flush()
         self.state = self._read_state()
         return self.state
@@ -134,6 +160,7 @@ class YukonGui:
         self._build_content()
         self._build_status()
         self.refresh()
+        self._refresh_timer_tick()
 
     def _build_toolbar(self) -> None:
         toolbar = tk.Frame(self.root, bg="#13351d", padx=10, pady=10)
@@ -320,11 +347,26 @@ class YukonGui:
         else:
             self._draw_tableau(state)
 
-        self.phase_var.set(f"Phase: {state['phase']}\nDeck cards: {len(state['deck_cards'])}")
+        timer_text = format_elapsed_time(state["elapsed_seconds"])
+        self.phase_var.set(
+            f"Phase: {state['phase']}\nDeck cards: {len(state['deck_cards'])}\nTimer: {timer_text}"
+        )
         self.last_command_var.set(f"Last Command:\n{state['last_command'] or '(none yet)'}")
         self.status_var.set(f"Message: {state['message'] or '(no message yet)'}")
         self._apply_status_style(state)
         self._show_popup_feedback(state)
+
+    def _refresh_timer_tick(self) -> None:
+        try:
+            if self.bridge.state["phase"] == "PLAY":
+                self.bridge.request_state()
+                self.refresh()
+        except Exception as exc:
+            self.status_var.set(f"Timer refresh failed: {exc}")
+
+        # Tkinter calls this again after one second. This is what makes the
+        # clock feel alive even if the player is just thinking about a move.
+        self.root.after(1000, self._refresh_timer_tick)
 
     def _apply_status_style(self, state: dict) -> None:
         message = state["message"]
