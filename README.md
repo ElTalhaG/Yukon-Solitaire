@@ -73,6 +73,8 @@ Useful STARTUP commands:
 - `SI`: interleave shuffle with a random split
 - `SR`: random insertion shuffle
 - `SD <filename>`: save the current deck order
+- `S <filename>`: save the current full game state
+- `L <filename>`: load a previously saved full game state
 - `P`: start the game
 - `QQ`: quit the program
 
@@ -81,6 +83,8 @@ Useful PLAY commands:
 - `C2->C7`: move the bottom card from column 2 to column 7
 - `C5:JD->C1`: move `JD` and all visible cards below it from column 5 to column 1
 - `F1->C3`: move the top foundation card from foundation 1 back to column 3
+- `S <filename>`: save the current full game state
+- `L <filename>`: load a previously saved full game state
 - `Q`: quit the current game and return to STARTUP
 - `QQ`: quit the program
 
@@ -158,6 +162,7 @@ Already implemented in the repo:
 - quality-check notes for strict builds and sanitizer runs
 - optional input hardening for common command typing mistakes
 - optional game timer shown in both terminal and GUI
+- optional full game-state save/load with `S <filename>` and `L <filename>`
 
 ## Notes for submission
 

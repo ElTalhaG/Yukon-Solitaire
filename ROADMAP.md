@@ -177,8 +177,8 @@ Assumption for current status:
 - `[done]` Input hardening for common malformed terminal and GUI command input.
 - `[not started]` Undo support with unlimited rollback to the start of the game.
 - `[not started]` Redo support after undo.
-- `[not started]` Save current game state with `S <filename>`.
-- `[not started]` Load current game state with `L <filename>`.
+- `[done]` Save current game state with `S <filename>`.
+- `[done]` Load current game state with `L <filename>`.
 - `[done]` Timer for current game duration.
 - `[not started]` Best completion time tracking.
 
