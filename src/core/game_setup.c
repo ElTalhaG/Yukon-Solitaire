@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "list.h"
+#include "timer.h"
 
 /*
  * Yukon starts with fixed column sizes and a fixed number of hidden cards.
@@ -118,6 +119,7 @@ bool game_start_play(GameState *game_state, char *error_message, size_t error_si
     }
 
     game_state->phase = GAME_PHASE_PLAY;
+    game_timer_start(game_state);
     set_error_message(error_message, error_size, "OK");
     return true;
 }

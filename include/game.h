@@ -3,6 +3,8 @@
 
 #include "card.h"
 
+#include <time.h>
+
 /* Fixed game limits taken directly from the project description. */
 #define TABLEAU_COLUMNS 7
 #define FOUNDATION_COUNT 4
@@ -72,6 +74,16 @@ typedef struct {
      * sometimes as visible cards after SW. This flag keeps that choice around.
      */
     bool startup_show_all;
+
+    /*
+     * Optional extension: timer for the current game.
+     * The timer starts when P successfully deals the tableau and resets when
+     * the player goes back to STARTUP. We keep it in the shared state so both
+     * terminal and GUI show the same time instead of each UI guessing itself.
+     */
+    bool timer_is_running;
+    time_t timer_started_at;
+    int timer_elapsed_before_start;
 
     /* Last raw command entered by the player in the terminal UI. */
     char last_command[MAX_COMMAND_LENGTH];

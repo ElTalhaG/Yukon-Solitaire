@@ -15,6 +15,7 @@ add_library(yukon_core
     src/core/game_setup.c
     src/core/move.c
     src/core/command_engine.c
+    src/core/timer.c
 )
 
 target_include_directories(yukon_core PUBLIC include)
