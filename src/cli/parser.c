@@ -98,6 +98,23 @@ static bool copy_argument(char *destination, const char *source)
     return true;
 }
 
+static bool words_equal_ignore_case(const char *left, const char *right)
+{
+    int index;
+
+    if (left == NULL || right == NULL) {
+        return false;
+    }
+
+    for (index = 0; left[index] != '\0' && right[index] != '\0'; index++) {
+        if (toupper((unsigned char) left[index]) != toupper((unsigned char) right[index])) {
+            return false;
+        }
+    }
+
+    return left[index] == '\0' && right[index] == '\0';
+}
+
 static bool parse_positive_integer(const char *text, int *value)
 {
     int result;
@@ -128,7 +145,9 @@ static bool parse_column_number(char prefix, const char *text, int *pile_index)
      * This helper handles both C1..C7 and F1..F4 style names.
      * We keep it simple on purpose: one letter and one digit.
      */
-    if (text == NULL || pile_index == NULL || text[0] != prefix || text[1] == '\0' || text[2] != '\0') {
+    if (text == NULL || pile_index == NULL ||
+        toupper((unsigned char) text[0]) != prefix ||
+        text[1] == '\0' || text[2] != '\0') {
         return false;
     }
 
@@ -144,7 +163,11 @@ static bool parse_move_source(const char *text, MoveReference *reference)
 {
     char card_code[3];
     char column_code[3];
+    char source_column[MAX_COMMAND_LENGTH];
+    char selected_card[MAX_COMMAND_LENGTH];
     const char *separator;
+    size_t column_length;
+    size_t card_length;
 
     if (text == NULL || reference == NULL) {
         return false;
@@ -177,7 +200,20 @@ static bool parse_move_source(const char *text, MoveReference *reference)
         return false;
     }
 
-    if (separator - text != 2) {
+    column_length = (size_t) (separator - text);
+    card_length = strlen(separator + 1);
+    if (column_length == 0 || card_length == 0 ||
+        column_length >= sizeof(source_column) || card_length >= sizeof(selected_card)) {
+        return false;
+    }
+
+    memcpy(source_column, text, column_length);
+    source_column[column_length] = '\0';
+    memcpy(selected_card, separator + 1, card_length + 1);
+    trim_spaces(source_column);
+    trim_spaces(selected_card);
+
+    if (strlen(source_column) != 2 || strlen(selected_card) != 2) {
         return false;
     }
 
@@ -186,8 +222,8 @@ static bool parse_move_source(const char *text, MoveReference *reference)
      * understands the small "C5" part, so we copy just those two characters
      * before checking the selected card after ':'.
      */
-    column_code[0] = text[0];
-    column_code[1] = text[1];
+    column_code[0] = source_column[0];
+    column_code[1] = source_column[1];
     column_code[2] = '\0';
 
     if (!parse_column_number('C', column_code, &reference->pile_index) ||
@@ -195,12 +231,8 @@ static bool parse_move_source(const char *text, MoveReference *reference)
         return false;
     }
 
-    if (strlen(separator + 1) != 2) {
-        return false;
-    }
-
-    card_code[0] = separator[1];
-    card_code[1] = separator[2];
+    card_code[0] = (char) toupper((unsigned char) selected_card[0]);
+    card_code[1] = (char) toupper((unsigned char) selected_card[1]);
     card_code[2] = '\0';
 
     if (!card_parse_code(card_code, &reference->rank, &reference->suit)) {
@@ -253,11 +285,11 @@ static bool parse_move_command(const char *text, ParsedCommand *command)
     }
 
     /*
-     * The project says there must be no spaces around ->, so we reject commands
-     * like "C1 -> C2" here instead of trying to be clever.
+     * For the optional input-hardening pass, we allow accidental spaces around
+     * the arrow. The strict course form still works; this just saves the user
+     * from retyping the whole command because of one space.
      */
-    if (arrow == text || arrow[2] == '\0' ||
-        isspace((unsigned char) arrow[-1]) || isspace((unsigned char) arrow[2])) {
+    if (arrow == text || arrow[2] == '\0') {
         return false;
     }
 
@@ -272,6 +304,8 @@ static bool parse_move_command(const char *text, ParsedCommand *command)
     memcpy(left, text, left_length);
     left[left_length] = '\0';
     memcpy(right, arrow + 2, right_length + 1);
+    trim_spaces(left);
+    trim_spaces(right);
 
     if (strstr(arrow + 2, "->") != NULL) {
         return false;
@@ -333,10 +367,10 @@ static bool parse_startup_or_play_command(char *text, ParsedCommand *command)
     }
 
     /*
-     * We keep the command words very direct and case-sensitive for now.
-     * That matches the assignment examples and avoids a bunch of parser noise.
+     * The assignment examples are uppercase, but for the optional hardening
+     * step we accept lowercase too. Filenames still keep their exact spelling.
      */
-    if (strcmp(word, "LD") == 0) {
+    if (words_equal_ignore_case(word, "LD")) {
         command->type = COMMAND_TYPE_LD;
         if (*rest != '\0') {
             command->has_argument = copy_argument(command->argument, rest);
@@ -345,12 +379,12 @@ static bool parse_startup_or_play_command(char *text, ParsedCommand *command)
         return true;
     }
 
-    if (strcmp(word, "SW") == 0) {
+    if (words_equal_ignore_case(word, "SW")) {
         command->type = COMMAND_TYPE_SW;
         return *rest == '\0';
     }
 
-    if (strcmp(word, "SI") == 0) {
+    if (words_equal_ignore_case(word, "SI")) {
         command->type = COMMAND_TYPE_SI;
         if (*rest == '\0') {
             return true;
@@ -360,12 +394,12 @@ static bool parse_startup_or_play_command(char *text, ParsedCommand *command)
         return command->has_split;
     }
 
-    if (strcmp(word, "SR") == 0) {
+    if (words_equal_ignore_case(word, "SR")) {
         command->type = COMMAND_TYPE_SR;
         return *rest == '\0';
     }
 
-    if (strcmp(word, "SD") == 0) {
+    if (words_equal_ignore_case(word, "SD")) {
         command->type = COMMAND_TYPE_SD;
         if (*rest != '\0') {
             command->has_argument = copy_argument(command->argument, rest);
@@ -374,17 +408,17 @@ static bool parse_startup_or_play_command(char *text, ParsedCommand *command)
         return true;
     }
 
-    if (strcmp(word, "QQ") == 0) {
+    if (words_equal_ignore_case(word, "QQ")) {
         command->type = COMMAND_TYPE_QQ;
         return *rest == '\0';
     }
 
-    if (strcmp(word, "P") == 0) {
+    if (words_equal_ignore_case(word, "P")) {
         command->type = COMMAND_TYPE_P;
         return *rest == '\0';
     }
 
-    if (strcmp(word, "Q") == 0) {
+    if (words_equal_ignore_case(word, "Q")) {
         command->type = COMMAND_TYPE_Q;
         return *rest == '\0';
     }
