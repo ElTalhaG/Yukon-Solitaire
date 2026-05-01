@@ -84,6 +84,10 @@ Useful PLAY commands:
 - `Q`: quit the current game and return to STARTUP
 - `QQ`: quit the program
 
+When a game is running, the terminal footer also shows `Timer:MM:SS`.
+The timer starts when `P` successfully deals the cards and resets when the game
+returns to STARTUP with `Q`.
+
 The strict command format uses no spaces around `->`, but the parser also accepts
 some common typing mistakes now:
 - lowercase commands, such as `ld`, `sw`, and `p`
@@ -153,6 +157,7 @@ Already implemented in the repo:
 - manual tests and malformed deck samples
 - quality-check notes for strict builds and sanitizer runs
 - optional input hardening for common command typing mistakes
+- optional game timer shown in both terminal and GUI
 
 ## Notes for submission
 

@@ -179,7 +179,7 @@ Assumption for current status:
 - `[not started]` Redo support after undo.
 - `[not started]` Save current game state with `S <filename>`.
 - `[not started]` Load current game state with `L <filename>`.
-- `[not started]` Timer for current game duration.
+- `[done]` Timer for current game duration.
 - `[not started]` Best completion time tracking.
 
 ## W. Report Writing
