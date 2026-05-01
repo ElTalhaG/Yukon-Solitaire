@@ -179,7 +179,6 @@ class YukonGui:
             ("Save Deck", self.save_file),
             ("Start Game", lambda: self.run_command("P")),
             ("Quit Game", lambda: self.run_command("Q")),
-            ("Refresh", lambda: self.refresh()),
         ]
 
         for label, callback in buttons:
@@ -261,33 +260,6 @@ class YukonGui:
             wraplength=240,
             font=("Courier", 11),
         ).pack(fill="x", pady=(0, 14))
-
-        tips = (
-            "Command examples\n"
-            "LD\n"
-            "SW\n"
-            "SI 26\n"
-            "SR\n"
-            "P\n"
-            "C1->F1\n"
-            "C6:4H->C4\n"
-            "F1->C3\n"
-            "Q\n\n"
-            "GUI note\n"
-            "For now the GUI uses the same command language as the terminal version.\n"
-            "That sounds simple, but honestly it is pretty useful while we test the backend."
-        )
-
-        tk.Label(
-            side_panel,
-            text=tips,
-            bg="#102918",
-            fg="#d9e4d0",
-            anchor="nw",
-            justify="left",
-            wraplength=240,
-            font=("Courier", 11),
-        ).pack(fill="both", expand=True)
 
     def _build_status(self) -> None:
         self.status_label = tk.Label(
