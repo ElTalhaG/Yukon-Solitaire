@@ -7,6 +7,31 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 
 
+THEME = {
+    "felt_dark": "#0f2f1c",
+    "felt": "#184f2e",
+    "wood": "#4b2717",
+    "gold": "#d8a642",
+    "cream": "#f8ecd3",
+    "card": "#fff8ea",
+    "card_shadow": "#0b1c12",
+    "red": "#a32626",
+    "ink": "#17120b",
+    "blue_back": "#263f5f",
+    "blue_back_light": "#456483",
+    "panel": "#102416",
+    "panel_soft": "#183522",
+    "ok": "#22513a",
+    "bad": "#7b2d2b",
+    "win": "#365b2c",
+    "entry": "#1f1710",
+    "panel_deep": "#201910",
+    "felt_border": "#0b2114",
+    "card_outline": "#3b2717",
+    "back_outline": "#162941",
+}
+
+
 def format_elapsed_time(seconds: int) -> str:
     # Keep the GUI timer format close to the C terminal format: MM:SS first.
     seconds = max(0, seconds)
@@ -142,13 +167,17 @@ class BackendBridge:
 
 class YukonGui:
     STARTUP_COLUMN_CARD_COUNTS = [1, 6, 7, 8, 9, 10, 11]
+    CARD_WIDTH = 82
+    CARD_HEIGHT = 38
+    CARD_GAP_Y = 50
 
     def __init__(self, root: tk.Tk, bridge: BackendBridge) -> None:
         self.root = root
         self.bridge = bridge
         self.root.title("Yukon Solitaire")
-        self.root.geometry("1420x900")
-        self.root.configure(bg="#1c4a2a")
+        self.root.geometry("1360x860")
+        self.root.minsize(1180, 760)
+        self.root.configure(bg=THEME["felt_dark"])
 
         self.status_var = tk.StringVar()
         self.phase_var = tk.StringVar()
@@ -158,20 +187,19 @@ class YukonGui:
 
         self._build_toolbar()
         self._build_content()
-        self._build_status()
         self.refresh()
         self._refresh_timer_tick()
 
     def _build_toolbar(self) -> None:
-        toolbar = tk.Frame(self.root, bg="#13351d", padx=10, pady=10)
+        toolbar = tk.Frame(self.root, bg=THEME["wood"], padx=14, pady=12)
         toolbar.pack(fill="x")
-        action_row = tk.Frame(toolbar, bg="#13351d")
+        action_row = tk.Frame(toolbar, bg=THEME["wood"])
         action_row.pack(fill="x")
-        command_row = tk.Frame(toolbar, bg="#13351d")
+        command_row = tk.Frame(toolbar, bg=THEME["wood"])
         command_row.pack(fill="x", pady=(10, 0))
 
         buttons = [
-            ("Load Default", lambda: self.run_command("LD")),
+            ("Default Deck", lambda: self.run_command("LD")),
             ("Load File", self.load_file),
             ("Show Deck", lambda: self.run_command("SW")),
             ("Interleave", lambda: self.run_command("SI")),
@@ -186,92 +214,112 @@ class YukonGui:
                 action_row,
                 text=label,
                 command=callback,
-                bg="#e8d8b8",
-                relief="raised",
-                padx=10,
-            ).pack(side="left", padx=4)
+                bg=THEME["cream"],
+                fg=THEME["ink"],
+                activebackground=THEME["gold"],
+                activeforeground=THEME["ink"],
+                relief="flat",
+                bd=0,
+                padx=13,
+                pady=5,
+                font=("Georgia", 10, "bold"),
+            ).pack(side="left", padx=5)
 
         tk.Label(
             command_row,
             text="Manual Command:",
-            bg="#13351d",
-            fg="#f4f0e6",
-            font=("Courier", 11, "bold"),
+            bg=THEME["wood"],
+            fg=THEME["cream"],
+            font=("Georgia", 11, "bold"),
         ).pack(side="left", padx=(4, 8))
-        tk.Entry(command_row, textvariable=self.command_var, width=36).pack(
-            side="left", fill="x", expand=True, padx=(0, 8)
+        tk.Entry(
+            command_row,
+            textvariable=self.command_var,
+            width=34,
+            bg=THEME["entry"],
+            fg=THEME["cream"],
+            insertbackground=THEME["gold"],
+            relief="flat",
+            font=("Courier", 12, "bold"),
+        ).pack(
+            side="left", fill="x", expand=True, padx=(0, 10), ipady=5
         )
         tk.Button(
             command_row,
-            text="Send Command",
+            text="Play Command",
             command=self.send_manual_command,
-            bg="#e8d8b8",
-            relief="raised",
-            padx=10,
+            bg=THEME["gold"],
+            fg=THEME["ink"],
+            activebackground=THEME["cream"],
+            relief="flat",
+            bd=0,
+            padx=14,
+            pady=5,
+            font=("Georgia", 10, "bold"),
         ).pack(side="left", padx=4)
 
     def _build_content(self) -> None:
-        content = tk.Frame(self.root, bg="#1c4a2a")
-        content.pack(fill="both", expand=True, padx=12, pady=12)
+        content = tk.Frame(self.root, bg=THEME["felt_dark"])
+        content.pack(fill="both", expand=True, padx=14, pady=14)
 
         self.canvas = tk.Canvas(
             content,
-            bg="#1c4a2a",
+            bg=THEME["felt"],
             highlightthickness=0,
-            width=1040,
+            width=1000,
             height=700,
         )
         self.canvas.pack(side="left", fill="both", expand=True)
 
-        side_panel = tk.Frame(content, bg="#102918", width=280, padx=14, pady=14)
-        side_panel.pack(side="right", fill="y", padx=(14, 0))
+        side_panel = tk.Frame(content, bg=THEME["panel"], width=260, padx=16, pady=16)
+        side_panel.pack(side="right", fill="y", padx=(16, 0))
         side_panel.pack_propagate(False)
 
         tk.Label(
             side_panel,
-            text="Quick Info",
-            bg="#102918",
-            fg="#f4f0e6",
+            text="Game Table",
+            bg=THEME["panel"],
+            fg=THEME["gold"],
             anchor="w",
-            font=("Courier", 16, "bold"),
+            font=("Georgia", 18, "bold"),
         ).pack(fill="x", pady=(0, 10))
 
         tk.Label(
             side_panel,
             textvariable=self.phase_var,
-            bg="#274c77",
-            fg="#f4f0e6",
+            bg=THEME["panel_soft"],
+            fg=THEME["cream"],
             anchor="w",
             justify="left",
-            padx=10,
-            pady=8,
-            font=("Courier", 12, "bold"),
-        ).pack(fill="x", pady=(0, 8))
+            padx=12,
+            pady=12,
+            font=("Courier", 13, "bold"),
+        ).pack(fill="x", pady=(0, 10))
 
         tk.Label(
             side_panel,
             textvariable=self.last_command_var,
-            bg="#1f3b2c",
-            fg="#f4f0e6",
-            anchor="w",
-            justify="left",
-            padx=10,
-            pady=8,
-            wraplength=240,
-            font=("Courier", 11),
-        ).pack(fill="x", pady=(0, 14))
-
-    def _build_status(self) -> None:
-        self.status_label = tk.Label(
-            self.root,
-            textvariable=self.status_var,
-            bg="#13351d",
-            fg="#f4f0e6",
+            bg=THEME["panel_deep"],
+            fg=THEME["cream"],
             anchor="w",
             justify="left",
             padx=12,
-            pady=10,
-            font=("Courier", 12),
+            pady=12,
+            wraplength=220,
+            font=("Courier", 12, "bold"),
+        ).pack(fill="x", pady=(0, 14))
+
+        self.status_label = tk.Label(
+            side_panel,
+            textvariable=self.status_var,
+            bg=THEME["panel_soft"],
+            fg=THEME["cream"],
+            anchor="w",
+            justify="left",
+            padx=12,
+            pady=12,
+            wraplength=220,
+            font=("Courier", 12, "bold"),
         )
         self.status_label.pack(fill="x")
 
@@ -324,7 +372,7 @@ class YukonGui:
             f"Phase: {state['phase']}\nDeck cards: {len(state['deck_cards'])}\nTimer: {timer_text}"
         )
         self.last_command_var.set(f"Last Command:\n{state['last_command'] or '(none yet)'}")
-        self.status_var.set(f"Message: {state['message'] or '(no message yet)'}")
+        self.status_var.set(f"Message:\n{state['message'] or '(no message yet)'}")
         self._apply_status_style(state)
         self._show_popup_feedback(state)
 
@@ -344,13 +392,13 @@ class YukonGui:
         message = state["message"]
 
         if "won" in message.lower():
-            background = "#365b2c"
+            background = THEME["win"]
         elif "invalid" in message.lower() or "not available" in message.lower():
-            background = "#6b2d2d"
+            background = THEME["bad"]
         elif message == "OK":
-            background = "#234b3a"
+            background = THEME["ok"]
         else:
-            background = "#13351d"
+            background = THEME["panel_soft"]
 
         self.status_label.configure(bg=background)
 
@@ -366,47 +414,83 @@ class YukonGui:
             self.last_popup_message = ""
 
     def _draw_title(self, state: dict) -> None:
+        self._draw_table_background()
         self.canvas.create_text(
-            20,
-            20,
+            24,
+            22,
             anchor="nw",
-            text=f"Yukon Solitaire GUI  |  Phase: {state['phase']}",
-            fill="#f4f0e6",
-            font=("Courier", 18, "bold"),
+            text="Yukon Solitaire",
+            fill=THEME["cream"],
+            font=("Georgia", 26, "bold"),
         )
         self.canvas.create_text(
-            20,
-            48,
+            27,
+            58,
             anchor="nw",
-            text="Shared C backend + Tkinter frontend",
-            fill="#b8c7b4",
-            font=("Courier", 11),
+            text=f"{state['phase']} table",
+            fill=THEME["gold"],
+            font=("Courier", 12, "bold"),
         )
+
+    def _draw_table_background(self) -> None:
+        width = self.canvas.winfo_width()
+        height = self.canvas.winfo_height()
+
+        # Keep the table matte/plain on purpose. Too much background decoration
+        # fights with the cards, and the cards should be the thing we notice.
+        self.canvas.create_rectangle(0, 0, width, height, fill=THEME["felt"], outline="")
+        self.canvas.create_rectangle(12, 12, width - 12, height - 12, outline=THEME["gold"], width=2)
+        self.canvas.create_rectangle(18, 18, width - 18, height - 18, outline=THEME["felt_border"], width=3)
 
     def _draw_card(self, x: int, y: int, code: str, face_up: bool) -> None:
         if face_up:
-            fill = "#f9f4ea"
-            outline = "#2a2a2a"
+            fill = THEME["card"]
+            outline = THEME["card_outline"]
             text = code
-            text_color = "#9a1f1f" if code.endswith(("H", "D")) else "#111111"
+            text_color = THEME["red"] if code.endswith(("H", "D")) else THEME["ink"]
         else:
-            fill = "#415a77"
-            outline = "#223447"
-            text = "[ ]"
-            text_color = "#f4f0e6"
+            fill = THEME["blue_back"]
+            outline = THEME["back_outline"]
+            text = "◆"
+            text_color = THEME["cream"]
 
-        self.canvas.create_rectangle(x, y, x + 78, y + 34, fill=fill, outline=outline, width=2)
+        self.canvas.create_rectangle(
+            x + 4,
+            y + 5,
+            x + self.CARD_WIDTH + 4,
+            y + self.CARD_HEIGHT + 5,
+            fill=THEME["card_shadow"],
+            outline="",
+        )
+        self.canvas.create_rectangle(
+            x,
+            y,
+            x + self.CARD_WIDTH,
+            y + self.CARD_HEIGHT,
+            fill=fill,
+            outline=outline,
+            width=2,
+        )
+        if not face_up:
+            self.canvas.create_rectangle(
+                x + 8,
+                y + 7,
+                x + self.CARD_WIDTH - 8,
+                y + self.CARD_HEIGHT - 7,
+                outline=THEME["blue_back_light"],
+                width=2,
+            )
         self.canvas.create_text(
-            x + 39,
-            y + 17,
+            x + self.CARD_WIDTH / 2,
+            y + self.CARD_HEIGHT / 2,
             text=text,
             fill=text_color,
-            font=("Courier", 13, "bold"),
+            font=("Courier", 14, "bold"),
         )
 
     def _draw_foundations(self, state: dict) -> None:
-        start_x = 820
-        y = 80
+        start_x = max(760, self.canvas.winfo_width() - 140)
+        y = 118
 
         for foundation_index in range(4):
             foundation = state["foundations"].get(
@@ -417,11 +501,11 @@ class YukonGui:
             top_code = foundation["top_code"]
 
             self.canvas.create_text(
-                x + 50,
-                y - 18,
+                x + self.CARD_WIDTH / 2,
+                y - 28,
                 text=f"F{foundation_index + 1}",
-                fill="#f4f0e6",
-                font=("Courier", 14, "bold"),
+                fill=THEME["cream"],
+                font=("Georgia", 15, "bold"),
             )
 
             if top_code == "-":
@@ -429,29 +513,12 @@ class YukonGui:
             else:
                 self._draw_card(x, y, top_code, True)
 
-            self.canvas.create_text(
-                x + 120,
-                y + 17,
-                text=f"size={foundation['size']}",
-                fill="#f4f0e6",
-                anchor="w",
-                font=("Courier", 11),
-            )
-            if foundation["assigned"]:
-                self.canvas.create_text(
-                    x + 120,
-                    y + 34,
-                    text=f"suit={foundation['top_code'][-1]}",
-                    fill="#b8c7b4",
-                    anchor="w",
-                    font=("Courier", 10),
-                )
-            y += 105
+            y += 120
 
     def _draw_startup_deck(self, state: dict) -> None:
         deck_cards = state["deck_cards"]
-        x_positions = [40, 150, 260, 370, 480, 590, 700]
-        y_start = 92
+        x_positions = [48, 148, 248, 348, 448, 548, 648]
+        y_start = 118
         deck_position = 0
 
         for previous_row in range(max(self.STARTUP_COLUMN_CARD_COUNTS)):
@@ -463,7 +530,7 @@ class YukonGui:
                         face_up = state["show_all"]
                         self._draw_card(
                             x_positions[column_index],
-                            y_start + previous_row * 50,
+                            y_start + previous_row * self.CARD_GAP_Y,
                             code,
                             face_up,
                         )
@@ -472,10 +539,10 @@ class YukonGui:
         for column_index in range(7):
             self.canvas.create_text(
                 x_positions[column_index] + 39,
-                72,
+                90,
                 text=f"C{column_index + 1}",
-                fill="#f4f0e6",
-                font=("Courier", 14, "bold"),
+                fill=THEME["cream"],
+                font=("Georgia", 15, "bold"),
             )
 
         if not deck_cards:
@@ -483,28 +550,28 @@ class YukonGui:
                 60,
                 120,
                 anchor="nw",
-                text="No deck loaded yet.\nUse Load Default or Load File to begin.",
-                fill="#d9e4d0",
-                font=("Courier", 13),
+                text="No deck loaded yet.\nUse Default Deck or Load File to begin.",
+                fill=THEME["cream"],
+                font=("Georgia", 15, "bold"),
             )
 
     def _draw_tableau(self, state: dict) -> None:
-        x_positions = [40, 150, 260, 370, 480, 590, 700]
-        y_start = 92
+        x_positions = [48, 148, 248, 348, 448, 548, 648]
+        y_start = 118
 
         for column_index in range(7):
             self.canvas.create_text(
                 x_positions[column_index] + 39,
-                72,
+                90,
                 text=f"C{column_index + 1}",
-                fill="#f4f0e6",
-                font=("Courier", 14, "bold"),
+                fill=THEME["cream"],
+                font=("Georgia", 15, "bold"),
             )
 
             for row_index, card in enumerate(state["tableau"].get(column_index, [])):
                 self._draw_card(
                     x_positions[column_index],
-                    y_start + row_index * 50,
+                    y_start + row_index * self.CARD_GAP_Y,
                     card["code"],
                     card["face_up"],
                 )
