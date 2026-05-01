@@ -20,6 +20,8 @@ typedef enum {
     COMMAND_TYPE_SI,
     COMMAND_TYPE_SR,
     COMMAND_TYPE_SD,
+    COMMAND_TYPE_SAVE_GAME,
+    COMMAND_TYPE_LOAD_GAME,
     COMMAND_TYPE_QQ,
     COMMAND_TYPE_P,
     COMMAND_TYPE_Q,
@@ -58,7 +60,7 @@ typedef struct {
      */
     char raw_text[MAX_COMMAND_LENGTH];
 
-    /* Optional filename for LD and SD. */
+    /* Optional filename for LD, SD, S, and L. */
     char argument[MAX_COMMAND_LENGTH];
     bool has_argument;
 

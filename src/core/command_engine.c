@@ -4,6 +4,7 @@
 
 #include "deck_io.h"
 #include "game_setup.h"
+#include "game_state_io.h"
 #include "move.h"
 #include "shuffle.h"
 
@@ -31,6 +32,12 @@ static int is_startup_only_command(CommandType type)
            type == COMMAND_TYPE_SR ||
            type == COMMAND_TYPE_SD ||
            type == COMMAND_TYPE_P;
+}
+
+static int is_any_phase_command(CommandType type)
+{
+    return type == COMMAND_TYPE_SAVE_GAME ||
+           type == COMMAND_TYPE_LOAD_GAME;
 }
 
 static int is_play_only_command(CommandType type)
@@ -163,6 +170,27 @@ CommandExecutionResult game_execute_command(GameState *game_state, const ParsedC
 
     if (command->type == COMMAND_TYPE_QQ) {
         return COMMAND_EXECUTION_QUIT;
+    }
+
+    if (is_any_phase_command(command->type)) {
+        if (command->type == COMMAND_TYPE_SAVE_GAME) {
+            game_state_save_to_file(game_state,
+                                    command->has_argument ? command->argument : NULL,
+                                    game_state->message, sizeof(game_state->message));
+        } else {
+            /*
+             * Loading replaces the whole game state. After that we write the
+             * current L command back into last_command so the UI still shows
+             * what the player just did, not whatever was stored in the file.
+             */
+            if (game_state_load_from_file(game_state,
+                                          command->has_argument ? command->argument : NULL,
+                                          game_state->message, sizeof(game_state->message))) {
+                game_remember_command(game_state, command->raw_text);
+            }
+        }
+
+        return COMMAND_EXECUTION_CONTINUE;
     }
 
     if (game_state->phase == GAME_PHASE_STARTUP) {

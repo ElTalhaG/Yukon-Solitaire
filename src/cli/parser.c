@@ -408,6 +408,26 @@ static bool parse_startup_or_play_command(char *text, ParsedCommand *command)
         return true;
     }
 
+    if (words_equal_ignore_case(word, "S")) {
+        command->type = COMMAND_TYPE_SAVE_GAME;
+        if (*rest == '\0') {
+            return false;
+        }
+
+        command->has_argument = copy_argument(command->argument, rest);
+        return command->has_argument;
+    }
+
+    if (words_equal_ignore_case(word, "L")) {
+        command->type = COMMAND_TYPE_LOAD_GAME;
+        if (*rest == '\0') {
+            return false;
+        }
+
+        command->has_argument = copy_argument(command->argument, rest);
+        return command->has_argument;
+    }
+
     if (words_equal_ignore_case(word, "QQ")) {
         command->type = COMMAND_TYPE_QQ;
         return *rest == '\0';
