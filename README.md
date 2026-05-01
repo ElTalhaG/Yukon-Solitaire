@@ -84,7 +84,12 @@ Useful PLAY commands:
 - `Q`: quit the current game and return to STARTUP
 - `QQ`: quit the program
 
-There must be no spaces around `->`.
+The strict command format uses no spaces around `->`, but the parser also accepts
+some common typing mistakes now:
+- lowercase commands, such as `ld`, `sw`, and `p`
+- lowercase card codes, such as `c5:jd->c1`
+- extra spaces around `->`, such as `C5:JD -> C1`
+- extra spaces around `:`, such as `C5 : JD -> C1`
 
 Good quick test flow:
 
@@ -147,6 +152,7 @@ Already implemented in the repo:
 - GUI bridge plus first working Tkinter interface
 - manual tests and malformed deck samples
 - quality-check notes for strict builds and sanitizer runs
+- optional input hardening for common command typing mistakes
 
 ## Notes for submission
 

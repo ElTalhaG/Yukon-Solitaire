@@ -174,7 +174,7 @@ Assumption for current status:
 
 ## V. Optional Extensions
 
-- `[not started]` Input hardening for any malformed terminal input.
+- `[done]` Input hardening for common malformed terminal and GUI command input.
 - `[not started]` Undo support with unlimited rollback to the start of the game.
 - `[not started]` Redo support after undo.
 - `[not started]` Save current game state with `S <filename>`.
