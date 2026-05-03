@@ -60,6 +60,7 @@ static void dump_state(FILE *stream, const GameState *game_state)
     fprintf(stream, "LAST_COMMAND\t%s\n", game_state->last_command);
     fprintf(stream, "MESSAGE\t%s\n", game_state->message);
     fprintf(stream, "ELAPSED_SECONDS\t%d\n", game_timer_elapsed_seconds(game_state));
+    fprintf(stream, "BEST_SECONDS\t%d\n", game_state->best_time_seconds);
     fprintf(stream, "DECK_SIZE\t%d\n", game_state->deck.size);
 
     current = game_state->deck.top;

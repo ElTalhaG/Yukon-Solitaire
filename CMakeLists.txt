@@ -7,6 +7,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
 add_library(yukon_core
+    src/core/best_time.c
     src/core/card.c
     src/core/game.c
     src/core/list.c

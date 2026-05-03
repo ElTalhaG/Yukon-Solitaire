@@ -85,6 +85,12 @@ typedef struct {
     time_t timer_started_at;
     int timer_elapsed_before_start;
 
+    /*
+     * Optional extension: best completion time.
+     * A value of 0 means we do not have a completed game saved yet.
+     */
+    int best_time_seconds;
+
     /* Last raw command entered by the player in the terminal UI. */
     char last_command[MAX_COMMAND_LENGTH];
 

@@ -2,6 +2,7 @@
 
 #include <stddef.h>
 
+#include "best_time.h"
 #include "timer.h"
 
 void deck_init(Deck *deck)
@@ -53,6 +54,7 @@ void game_state_init(GameState *game_state)
     game_state->phase = GAME_PHASE_STARTUP;
     game_state->startup_show_all = false;
     game_timer_reset(game_state);
+    best_time_load(game_state);
 
     /* No command has been entered yet, so both UI strings start empty. */
     game_state->last_command[0] = '\0';

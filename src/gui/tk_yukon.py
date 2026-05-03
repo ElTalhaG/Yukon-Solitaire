@@ -83,6 +83,7 @@ class BackendBridge:
             "last_command": "",
             "message": "",
             "elapsed_seconds": 0,
+            "best_seconds": 0,
             "deck_cards": [],
             "foundations": {},
             "tableau": {index: [] for index in range(7)},
@@ -119,6 +120,8 @@ class BackendBridge:
                 state["message"] = parts[1] if len(parts) > 1 else ""
             elif tag == "ELAPSED_SECONDS":
                 state["elapsed_seconds"] = int(parts[1])
+            elif tag == "BEST_SECONDS":
+                state["best_seconds"] = int(parts[1])
             elif tag == "DECK_CARD":
                 state["deck_cards"].append(
                     {"index": int(parts[1]), "code": parts[2], "face_up": parts[3] == "1"}
@@ -368,8 +371,12 @@ class YukonGui:
             self._draw_tableau(state)
 
         timer_text = format_elapsed_time(state["elapsed_seconds"])
+        best_text = format_elapsed_time(state["best_seconds"]) if state["best_seconds"] > 0 else "(none)"
         self.phase_var.set(
-            f"Phase: {state['phase']}\nDeck cards: {len(state['deck_cards'])}\nTimer: {timer_text}"
+            f"Phase: {state['phase']}\n"
+            f"Deck cards: {len(state['deck_cards'])}\n"
+            f"Timer: {timer_text}\n"
+            f"Best: {best_text}"
         )
         self.last_command_var.set(f"Last Command:\n{state['last_command'] or '(none yet)'}")
         self.status_var.set(f"Message:\n{state['message'] or '(no message yet)'}")

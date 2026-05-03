@@ -184,12 +184,15 @@ static void render_startup_row(FILE *stream, const GameState *game_state, int ro
 static void render_footer(FILE *stream, const GameState *game_state)
 {
     char timer_text[16];
+    char best_text[16];
 
     game_timer_format(game_timer_elapsed_seconds(game_state), timer_text, sizeof(timer_text));
+    game_timer_format(game_state->best_time_seconds, best_text, sizeof(best_text));
 
     fprintf(stream, "\nLast Command:%s\n", game_state->last_command);
     fprintf(stream, "Message:%s\n", game_state->message);
     fprintf(stream, "Timer:%s\n", timer_text);
+    fprintf(stream, "Best:%s\n", game_state->best_time_seconds > 0 ? best_text : "(none)");
     fputs("INPUT > ", stream);
 }
 

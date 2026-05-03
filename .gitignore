@@ -5,3 +5,4 @@ cmake-build-*/
 yukon_cli_check
 yukon_cli_asan
 yukon_gui_bridge_asan
+yukon_best_time.txt

@@ -1,12 +1,15 @@
 #include "command_engine.h"
 
+#include <stdio.h>
 #include <string.h>
 
+#include "best_time.h"
 #include "deck_io.h"
 #include "game_setup.h"
 #include "game_state_io.h"
 #include "move.h"
 #include "shuffle.h"
+#include "timer.h"
 
 /*
  * This file is the "what happens when a command is valid?" layer.
@@ -124,6 +127,11 @@ static int execute_startup_command(GameState *game_state, const ParsedCommand *c
 
 static int execute_play_command(GameState *game_state, const ParsedCommand *command)
 {
+    int elapsed_seconds;
+    int is_new_best;
+    char elapsed_text[16];
+    char best_text[16];
+
     if (command->type == COMMAND_TYPE_Q) {
         game_quit_play(game_state);
         set_message(game_state, "OK");
@@ -133,7 +141,25 @@ static int execute_play_command(GameState *game_state, const ParsedCommand *comm
     if (command->type == COMMAND_TYPE_MOVE) {
         if (game_apply_move(game_state, &command->from, &command->to) &&
             game_is_won(game_state)) {
-            set_message(game_state, "OK - Game won.");
+            /*
+             * The exact moment the game is won is the finish line.
+             * We stop the timer before comparing best times so the result does
+             * not keep changing while the player reads the message.
+             */
+            elapsed_seconds = game_timer_elapsed_seconds(game_state);
+            game_timer_stop(game_state);
+            is_new_best = best_time_record_if_faster(game_state, elapsed_seconds);
+
+            game_timer_format(elapsed_seconds, elapsed_text, sizeof(elapsed_text));
+            game_timer_format(game_state->best_time_seconds, best_text, sizeof(best_text));
+
+            if (is_new_best) {
+                snprintf(game_state->message, sizeof(game_state->message),
+                         "OK - Game won. New best time: %s.", elapsed_text);
+            } else {
+                snprintf(game_state->message, sizeof(game_state->message),
+                         "OK - Game won. Time: %s. Best: %s.", elapsed_text, best_text);
+            }
         }
 
         return 1;
