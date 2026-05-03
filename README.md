@@ -163,6 +163,7 @@ Already implemented in the repo:
 - optional input hardening for common command typing mistakes
 - optional game timer shown in both terminal and GUI
 - optional full game-state save/load with `S <filename>` and `L <filename>`
+- optional best completion time tracking in `yukon_best_time.txt`
 
 ## Notes for submission
 

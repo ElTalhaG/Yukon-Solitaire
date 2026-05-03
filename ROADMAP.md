@@ -180,7 +180,7 @@ Assumption for current status:
 - `[done]` Save current game state with `S <filename>`.
 - `[done]` Load current game state with `L <filename>`.
 - `[done]` Timer for current game duration.
-- `[not started]` Best completion time tracking.
+- `[done]` Best completion time tracking.
 
 ## W. Report Writing
 
