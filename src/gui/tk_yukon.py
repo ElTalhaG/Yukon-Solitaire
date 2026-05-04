@@ -190,7 +190,9 @@ class YukonGui:
 
         self._build_toolbar()
         self._build_content()
+        self.root.update_idletasks()
         self.refresh()
+        self.root.after(100, self.refresh)
         self._refresh_timer_tick()
 
     def _build_toolbar(self) -> None:
@@ -585,6 +587,14 @@ class YukonGui:
 
 
 def main() -> int:
+    if tk.TkVersion < 8.6:
+        print(
+            "This GUI needs Tk 8.6 or newer. We developed and tested it with Python 3.12. "
+            "Please run it with python3.12 instead of the macOS system python3.",
+            file=sys.stderr,
+        )
+        return 1
+
     try:
         bridge = BackendBridge(sys.argv[1] if len(sys.argv) > 1 else None)
     except Exception as exc:
